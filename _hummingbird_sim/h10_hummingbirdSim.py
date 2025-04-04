@@ -8,7 +8,7 @@ from hummingbirdDynamics import HummingbirdDynamics
 from ctrlPID import ctrlPID
 
 # instantiate pendulum, controller, and reference classes
-hummingbird = HummingbirdDynamics(alpha=0.1)
+hummingbird = HummingbirdDynamics(alpha=0.2)
 controller = ctrlPID()
 psi_ref = SignalGenerator(amplitude=30.*np.pi/180., frequency=0.02)
 theta_ref = SignalGenerator(amplitude=15.*np.pi/180., frequency=0.05)

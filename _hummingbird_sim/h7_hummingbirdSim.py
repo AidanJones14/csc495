@@ -5,7 +5,7 @@ from signalGenerator import SignalGenerator
 from hummingbirdAnimation import HummingbirdAnimation
 from dataPlotter import DataPlotter
 from hummingbirdDynamics import HummingbirdDynamics
-from ctrlLonPD import ctrlLonPD
+from _hummingbird_sim.ctrlLonPID import ctrlLonPD
 
 # instantiate pendulum, controller, and reference classes
 hummingbird = HummingbirdDynamics(alpha=0.1)

@@ -6,7 +6,7 @@ from hummingbirdAnimation import HummingbirdAnimation
 from dataPlotter import DataPlotter
 from hummingbirdDynamics import HummingbirdDynamics
 from ctrlLatRoll import ctrlLatRoll  # Import the roll controller
-from ctrlLatYaw import ctrlLatYaw  # Import the yaw controller
+from _hummingbird_sim.ctrlLatYawPID import ctrlLatYaw  # Import the yaw controller
 
 # Instantiate hummingbird, controllers, and reference classes
 hummingbird = HummingbirdDynamics(alpha=0.1)

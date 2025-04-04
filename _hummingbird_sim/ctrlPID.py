@@ -1,15 +1,15 @@
 import numpy as np
 import hummingbirdParam as P
-from ctrlLatRoll import ctrlLatRoll
-from ctrlLatYawPD import ctrlLatYawPD
-from ctrlLonPD import ctrlLonPD
+from ctrlLatRollPID import ctrlLatRollPID
+from ctrlLatYawPID import ctrlLatYawPID
+from ctrlLonPID import ctrlLonPID
 
-class ctrlPD:
+class ctrlPID:
     def __init__(self):
         # Initialize the pitch, roll, and yaw controllers
-        self.pitch_controller = ctrlLonPD()  
-        self.roll_controller = ctrlLatRoll()  
-        self.yaw_controller = ctrlLatYawPD()  
+        self.pitch_controller = ctrlLonPID()  
+        self.roll_controller = ctrlLatRollPID()  
+        self.yaw_controller = ctrlLatYawPID()  
 
     def update(self, r, y):
         # Extract reference signals

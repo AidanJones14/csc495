@@ -1,11 +1,11 @@
 import numpy as np
 import hummingbirdParam as P 
 
-class ctrlLatYaw:
+class ctrlLatYawPID:
     def __init__(self):
         # Design parameters for the yaw loop
         M = 10  
-        tr_psi = M * 0.2
+        tr_psi = M * 0.1
         zeta_psi = 0.707
         
         # Calculate natural frequency for yaw
@@ -16,7 +16,7 @@ class ctrlLatYaw:
         # Calculate PD gains for yaw
         self.kp_psi = wn_psi**2 / b_psi
         self.kd_psi = 2 * zeta_psi * wn_psi / b_psi
-        
+        self.ki_psi = wn_psi / 30
         # Print gains to terminal (for debugging)
         print('kp_psi: ', self.kp_psi)
         print('kd_psi: ', self.kd_psi)
@@ -27,18 +27,18 @@ class ctrlLatYaw:
         # Delayed variables for derivative calculation
         self.psi_d1 = 0.0  
         self.psi_dot = 0.0  
-
+        self.integrator = 0.0
     def update(self, r: np.ndarray, y: np.ndarray):
 
         psi_ref = r[1][0]
 
         psi = y[2][0]
-
+        self.integrator += (psi_ref - psi) * self.Ts
         # Compute derivative of yaw angle
         psi_dot = (psi - self.psi_d1) / self.Ts
         
         # Compute yaw torque using PD control
-        tau_psi = (self.kp_psi * (psi_ref - psi)) - (self.kd_psi * psi_dot)
+        tau_psi = (self.kp_psi * (psi_ref - psi)) - (self.kd_psi * psi_dot) + (self.ki_psi * self.integrator)
         
         # Saturate the yaw torque to stay within limits
         tau_psi = saturate(tau_psi, -P.torque_max, P.torque_max)

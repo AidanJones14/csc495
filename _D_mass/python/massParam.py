@@ -16,7 +16,7 @@ zdot0 = 1  # initial velocity of mass m/s
 
 # Simulation Parameters
 t_start = 0.0 # Start time of simulation
-t_end = 10.90  # End time of simulation
+t_end = 100.0  # End time of simulation
 Ts = .01  # sample time for simulation
 t_plot = .1 # the plotting and animation is updated at this rate
 

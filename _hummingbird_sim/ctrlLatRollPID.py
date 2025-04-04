@@ -1,7 +1,7 @@
 import numpy as np
 import hummingbirdParam as P  # Import parameters for the hummingbird
 
-class ctrlLatRoll:
+class ctrlLatRollPID:
     def __init__(self):
         # Design parameters for the roll loop
         tr_phi = 0.1  

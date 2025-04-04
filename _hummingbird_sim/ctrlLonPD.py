@@ -4,7 +4,7 @@ import hummingbirdParam as P
 class ctrlLonPD:
     def __init__(self):
         # rise time
-        tr_pitch = 0.5
+        tr_pitch = 0.3
         # damping ratio
         zeta_pitch = 0.707
         
@@ -69,5 +69,3 @@ def saturate(u, low_limit, up_limit):
         for i in range(0, u.shape[0]):
             u[i][0] = np.max((np.min((u[i][0], up_limit)), low_limit))
     return u
-
-

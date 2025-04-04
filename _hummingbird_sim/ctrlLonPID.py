@@ -1,75 +1,74 @@
 import numpy as np
 import hummingbirdParam as P
 
-
 class ctrlLonPID:
     def __init__(self):
-        # tuning parameters
-        tr_pitch = 
-        zeta_pitch = 
-        self.ki_pitch = 
-        # gain calculation
-        b_theta = P.ellT/(P.m1 * P.ell1**2 + P.m2 * P.ell2**2 + P.J1y + P.J2y)
-        #print('b_theta: ', b_theta)
-        wn_pitch = 
-        self.kp_pitch = 
-        self.kd_pitch = 
-        # print gains to terminal
+        # rise time
+        tr_pitch = 0.3
+        # damping ratio
+        zeta_pitch = 0.707
+        
+        # Calculate natural frequency
+        wn_pitch = 2.2 / tr_pitch
+        
+        # gains and b theta value
+        b_theta = P.ellT / ((P.m1 * P.ell1**2) + (P.m2 * P.ell2**2) + P.J1y + P.J2y)
+        self.kp_pitch = wn_pitch**2 / b_theta
+        self.kd_pitch = (2 * zeta_pitch * wn_pitch) / b_theta
+        self.ki_pitch = wn_pitch / 24
+        # Print gains to terminal
         print('kp_pitch: ', self.kp_pitch)
-        print('ki_pitch: ', self.ki_pitch)
-        print('kd_pitch: ', self.kd_pitch) 
-        # sample rate of the controller
+        print('kd_pitch: ', self.kd_pitch)
+        
+        # Sample rate of the controller
         self.Ts = P.Ts
-        # dirty derivative parameters
-        sigma = 0.05  # cutoff freq for dirty derivative
-        self.beta = (2 * sigma - self.Ts) / (2 * sigma + self.Ts)
-        # delayed variables
-        self.theta_d1 = 0.
-        self.theta_dot = 0.
-        self.integrator_theta = 0.
-        self.error_theta_d1 = 0.  # pitch error delayed by 1
+        
+        # Delayed variables
+        self.theta_d1 = 0.0  # Previous pitch angle
+        self.theta_dot = 0.0  # Filtered derivative of pitch angle
+        self.integrator = 0.0
 
     def update(self, r: np.ndarray, y: np.ndarray):
+        # desired theta
         theta_ref = r[0][0]
-        theta = y[1][0]
-        force_fl = 
-        # compute errors
-        error_theta = 
-        # update differentiators
-        self.theta_dot = 
-        
-        # update integrators
-        self.integrator_theta = 
-        
-        # pitch control
-        force_unsat = 
-        force = saturate(force_unsat, -P.force_max, P.force_max)
-        torque = 0.
-        # convert force and torque to pwm signals
-        pwm = np.array([[force + torque / P.d],               # u_left
-                      [force - torque / P.d]]) / (2 * P.km)   # r_right          
-        pwm = saturate(pwm, 0, 1)
-        # update all delayed variables
-        self.theta_d1 = theta
-        self.error_theta_d1 = error_theta
-        # return pwm plus reference signals
-        return pwm, np.array([[0.], [theta_ref], [0.]])
 
+        # measured theta
+        theta = y[1][0]
+        error = theta_ref - theta
+        # Compute derivative
+        theta_dot = (theta - self.theta_d1) / self.Ts        
+        self.integrator += (theta_ref - theta) * self.Ts
+        # compute feedback force
+        force_fl = ((P.m1 * P.ell1) + (P.m2 * P.ell2)) * (P.g / P.ellT) * np.cos(theta)
+
+        # Compute control force
+        force_unsat = (self.kp_pitch * (theta_ref - theta)) - (self.kd_pitch * theta_dot) + (self.ki_pitch * self.integrator)
+        total_force = force_unsat + force_fl
+        force = saturate(total_force, -P.force_max, P.force_max)
+        
+
+        # Zero torque to prevent unwanted rotation in different planes
+        torque = 0.0
+        
+
+        # Convert force and torque to PWM signals
+        pwm = np.array([[force + torque / P.d],
+                        [force - torque / P.d]]) / (2 * P.km)
+        
+        pwm = saturate(pwm, 0, 1)
+        
+        # Update theta reference
+        self.theta_d1 = theta
+        
+        # Return PWM signals and reference signals
+        return pwm, np.array([[0.0], [theta_ref], [0.0]])
 
 def saturate(u, low_limit, up_limit):
     if isinstance(u, float) is True:
-        if u > up_limit:
-            u = up_limit
-        if u < low_limit:
-            u = low_limit
+        u = np.max((np.min((u, up_limit)), low_limit))
     else:
         for i in range(0, u.shape[0]):
-            if u[i][0] > up_limit:
-                u[i][0] = up_limit
-            if u[i][0] < low_limit:
-                u[i][0] = low_limit
+            u[i][0] = np.max((np.min((u[i][0], up_limit)), low_limit))
     return u
-
-
 
 
