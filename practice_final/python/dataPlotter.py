@@ -3,7 +3,9 @@ from matplotlib.lines import Line2D
 import numpy as np
 
 plt.ion()  # enable interactive drawing
-
+# The next two magic lines let the windows in MacOSX behave much better
+import matplotlib
+matplotlib.use('tkagg')  # requires TkInter
 
 class dataPlotter:
     ''' 

@@ -1,13 +1,20 @@
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+from matplotlib.widgets import Button
 import numpy as np 
 import rodMassParam as P
+# The next two magic lines let the windows in MacOSX behave much better
+import matplotlib
+matplotlib.use('tkagg')  # requires TkInter
 
-
+def exit_program(event):
+    exit()
+    
 class rodMassAnimation:
     def __init__(self):
         self.flag_init = True                  # Used to indicate initialization
         self.fig, self.ax = plt.subplots()    # Initializes a figure and axes object
+
         self.handle = []                      # Initializes a list object that will
                                               # be used to contain handles to the
                                               # patches and line objects.
@@ -25,6 +32,13 @@ class rodMassAnimation:
         # draw zero line
         plt.axis([-2.0*self.L, 2.0*self.L, -2.0*self.L, 2.0*self.L])
         plt.plot([0, self.L], [0, 0],'k--')
+
+        # Create exit button
+        self.button_ax = plt.axes([0.8, 0.805, 0.1, 0.075])  # [left, bottom, width, height]
+        self.exit_button = Button(self.button_ax, label='Exit', color='r',)
+        self.exit_button.label.set_fontweight('bold')
+        self.exit_button.label.set_fontsize(18)
+        self.exit_button.on_clicked(exit_program)
 
     def update(self, state):
         theta = state.item(0)
