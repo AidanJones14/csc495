@@ -13,8 +13,8 @@ width = 0.05  # width of block
 height = width*0.25  # height of block
 
 # Initial Conditions
-z0 = .5 # initial block position,m
-theta0 = np.pi/4  # initial beam angle,rads
+z0 = .25 # initial block position,m
+theta0 = 0.0  # initial beam angle,rads
 zdot0 = 0  # initial speed of block along beam, m/s
 thetadot0 = 0 # initial angular speed of the beam,rads/s
 
@@ -25,11 +25,11 @@ Ts = 0.01  # sample time for simulation
 t_plot = 0.1  # the plotting and animation is updated at this rate
 
 # saturation limits
-F_max = 1  # Max Force, N
+F_max = 5  # Max Force, N
 
 # dirty derivative parameters
 # sigma =   # cutoff freq for dirty derivative
 
 # equilibrium force when block is in center of beam
-# ze =
+ze = length / 2 
 # Fe =
